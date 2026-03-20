@@ -35,7 +35,7 @@ print("\nRaw downloaded columns:")
 print(raw.columns)
 
 # Raw is usually a DataFrame with multiple columns like:
-# ("Adj Close", "AAPL"), ("Close", "AAPL"), etc.
+# ("Adj Close", "AAPL"), ("Close", "AAPL"), etc
 # or for one ticker, columns like: Open High Low Close Adj Close Volume
 
 # Pick a price series:
@@ -78,7 +78,7 @@ returns = returns.shift(-1)
 returns_long = (
     returns
     .reset_index() # Move date index into a column
-    # Convert wide table → long table
+    # Convert wide table = long table
     .melt(id_vars=returns.index.name or "index", var_name="ticker", value_name="next_day_return")
 )
 

@@ -14,9 +14,10 @@ OUTPUT_CSV = "headlines.csv"
 
 
 def google_news_rss_url(ticker: str) -> str:
+    #docstring (a special comment used to explain the purpose of the function)
     """
-    Build a Google News RSS query for a stock ticker.
-    This is not official finance data. It is a convenient free headline source.
+    Build a Google News RSS query for a stock ticker
+    Not official finance data. It is a convenient free headline source
     """
     query = f"{ticker} stock" # Example: "AAPL stock"
     q = urllib.parse.quote(query) # Convert to URL-safe format
@@ -25,9 +26,9 @@ def google_news_rss_url(ticker: str) -> str:
 
 def parse_time(entry) -> str:
     """
-    Try to get a timestamp from the RSS entry.
-    If missing, use current UTC time.
-    Returns time as a string like '2026-01-20 09:15:00'.
+    Try to get a timestamp from the RSS entry
+    If missing, use current UTC time
+    Returns time as a string like '2026-01-20 09:15:00'
     """
     # If the article has a published time, use it
     if hasattr(entry, "published_parsed") and entry.published_parsed:
@@ -45,8 +46,8 @@ def parse_time(entry) -> str:
 
 def load_existing() -> pd.DataFrame:
     """
-    Load existing headlines.csv if it exists.
-    If it does not exist, return an empty table with the right columns.
+    Load existing headlines.csv if it exists
+    If it does not exist, return an empty table with the right columns
     """
     try:
         df = pd.read_csv(OUTPUT_CSV) # Try to read file

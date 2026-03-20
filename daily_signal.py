@@ -16,9 +16,9 @@ pipe = pipeline(
 def sentiment_score(text: str) -> float:
     #This function takes one headline as input and returns a single number representing sentiment
 
-    #Positive number → positive news
-    #Negative number → negative news
-    #Near zero → neutral news
+    #Positive number = positive news
+    #Negative number = negative news
+    #Near zero = neutral news
 
     #Run the FinBERT model on the text, result is a list of dictionaries with sentiment labels and scores
     scores = pipe(text)[0]
