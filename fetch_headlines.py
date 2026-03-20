@@ -9,6 +9,7 @@ TICKERS = ["AAPL", "TSLA"]
 # How many RSS items to request per ticker each time you run it
 ITEMS_PER_TICKER = 30
 
+# Name of the file where we will save the data
 OUTPUT_CSV = "headlines.csv"
 
 
@@ -17,8 +18,8 @@ def google_news_rss_url(ticker: str) -> str:
     Build a Google News RSS query for a stock ticker.
     This is not official finance data. It is a convenient free headline source.
     """
-    query = f"{ticker} stock"
-    q = urllib.parse.quote(query)
+    query = f"{ticker} stock" # Example: "AAPL stock"
+    q = urllib.parse.quote(query) # Convert to URL-safe format
     return f"https://news.google.com/rss/search?q={q}&hl=en-US&gl=US&ceid=US:en"
 
 
@@ -28,11 +29,14 @@ def parse_time(entry) -> str:
     If missing, use current UTC time.
     Returns time as a string like '2026-01-20 09:15:00'.
     """
+    # If the article has a published time, use it
     if hasattr(entry, "published_parsed") and entry.published_parsed:
         dt = datetime(*entry.published_parsed[:6], tzinfo=timezone.utc)
+
+    # If not, try using updated time
     elif hasattr(entry, "updated_parsed") and entry.updated_parsed:
         dt = datetime(*entry.updated_parsed[:6], tzinfo=timezone.utc)
-    else:
+    else: # If no time at all, use current time
         dt = datetime.now(timezone.utc)
 
     # Store as a simple timestamp string
@@ -45,25 +49,25 @@ def load_existing() -> pd.DataFrame:
     If it does not exist, return an empty table with the right columns.
     """
     try:
-        df = pd.read_csv(OUTPUT_CSV)
+        df = pd.read_csv(OUTPUT_CSV) # Try to read file
         # Make sure required columns exist
         needed = {"time", "ticker", "text", "link"}
         for col in needed:
             if col not in df.columns:
                 df[col] = ""
-        return df[["time", "ticker", "text", "link"]]
+        return df[["time", "ticker", "text", "link"]]  # Return only the columns we care about
     except FileNotFoundError:
-        return pd.DataFrame(columns=["time", "ticker", "text", "link"])
+        return pd.DataFrame(columns=["time", "ticker", "text", "link"])  # If file does not exist, return empty table
 
 
 def main():
-    existing = load_existing()
+    existing = load_existing() # Load old data
 
-    new_rows = []
+    new_rows = [] # Store new data here
 
-    for ticker in TICKERS:
-        url = google_news_rss_url(ticker)
-        feed = feedparser.parse(url)
+    for ticker in TICKERS:  # Loop through each stock ticker
+        url = google_news_rss_url(ticker) # Get RSS link
+        feed = feedparser.parse(url) # Read RSS feed
 
         # Take only a limited number of items to avoid huge files
         for entry in feed.entries[:ITEMS_PER_TICKER]:
@@ -76,6 +80,7 @@ def main():
 
             time_str = parse_time(entry)
 
+            # Save the data in a dictionary
             new_rows.append({
                 "time": time_str,
                 "ticker": ticker,
@@ -83,6 +88,7 @@ def main():
                 "link": link
             })
 
+    # Convert new data into a table
     new_df = pd.DataFrame(new_rows)
 
     # Combine old + new
@@ -98,9 +104,10 @@ def main():
     # Save back to headlines.csv
     combined.to_csv(OUTPUT_CSV, index=False)
 
+    # Print results
     print(f"Saved {len(new_df)} fetched rows.")
     print(f"Total rows in {OUTPUT_CSV}: {len(combined)}")
 
-
+# Run the program
 if __name__ == "__main__":
     main()
