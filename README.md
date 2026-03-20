@@ -14,11 +14,11 @@ This is meant as a learning and research project, not a production trading syste
 
 The pipeline looks like this:
 
-fetch_headlines.py  
-→ headlines.csv  
-→ daily_signal.py  
-→ headlines_scored.csv + daily_signals.csv  
-→ price_backtest.py  
+1. fetch_headlines.py  
+2. headlines.csv  
+3. daily_signal.py  
+4. headlines_scored.csv + daily_signals.csv  
+5. price_backtest.py  
 
 In words:
 1. Collect stock-related news headlines  
